@@ -20,6 +20,12 @@ function getPool() {
     }
     
     try {
+        // [SAFETY CHECK] Prevent Dev environment from connecting to Production DB (Selcom)
+        if (process.env.DB_HOST === '191.113.87.123' && process.env.APP_ENV === 'development') {
+            console.error('❌ FATAL: Intento de conexión a PRODUCCIÓN (Selcom) desde entorno de DESARROLLO detectado.');
+            throw new Error('Bloqueo de seguridad: Conexión a producción externa no permitida en desarrollo.');
+        }
+
         pool = new Pool({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,

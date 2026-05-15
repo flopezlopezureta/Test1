@@ -20,6 +20,13 @@ function getPool() {
     }
     
     try {
+        // [SAFETY CHECK] Prevent Dev environment from connecting to Production DB
+        if (process.env.DB_NAME === 'fullenvios' && process.env.APP_ENV === 'development') {
+            console.error('❌ FATAL: Intento de conexión a PRODUCCIÓN desde entorno de DESARROLLO detectado.');
+            console.error('Por favor, revisa tu archivo .env y asegúrate de que DB_NAME sea fullenvios_dev');
+            throw new Error('Bloqueo de seguridad: Conexión a producción no permitida en desarrollo.');
+        }
+
         pool = new Pool({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,

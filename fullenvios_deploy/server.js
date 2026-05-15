@@ -329,6 +329,7 @@ async function initializeDatabase() {
 
             for (const { col, label } of indexConfigs) {
                 try {
+                    /* 
                     // 1. Cleanup duplicates (keep the latest one)
                     await db.query(`
                         DELETE FROM packages 
@@ -340,6 +341,7 @@ async function initializeDatabase() {
                             ) t WHERE row_num > 1
                         )
                     `);
+                    */
 
                     // 2. Add Unique Constraint
                     const constraintName = `uq_${col.toLowerCase()}`;
@@ -545,8 +547,8 @@ async function initializeDatabase() {
 
         // --- NEW PICKUP TABLES ---
         await db.query(`
-            INSERT INTO system_settings (id, "companyName", "isAppEnabled", "requiredPhotos", "messagingPlan", "pickupMode", "meliFlexValidation", "saveFlexLabelPhoto", "meliAutoImport", "shopifyAutoImport", "publicTrackingEnabled", "isRutRequired", "flexDiscrepancyReportEnabled", "circuitExportEnabled")
-            VALUES (1, 'FULL ENVIOS', TRUE, 1, 'NONE', 'SCAN', TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE)
+            INSERT INTO system_settings (id, "companyName", "isAppEnabled", "requiredPhotos", "messagingPlan", "pickupMode", "meliFlexValidation", "saveFlexLabelPhoto", "meliAutoImport", "shopifyAutoImport", "publicTrackingEnabled", "isRutRequired", "flexDiscrepancyReportEnabled", "circuitExportEnabled", "timezone")
+            VALUES (1, 'FULL ENVIOS', TRUE, 1, 'NONE', 'SCAN', TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, 'America/Santiago')
             ON CONFLICT (id) DO NOTHING;
         `);
         await db.query(`

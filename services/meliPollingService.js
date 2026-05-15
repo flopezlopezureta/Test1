@@ -817,8 +817,11 @@ async function cleanupOutOfZonePackages() {
                 console.log(`[MeliPolling] Cleanup details: ID=${p.id}, City=${p.recipientCity}, Commune=${p.recipientCommune}, Source=${p.source}`);
             });
 
+            /* 
             await db.query('DELETE FROM tracking_events WHERE "packageId" = ANY($1)', [ids]);
             await db.query('DELETE FROM packages WHERE id = ANY($1)', [ids]);
+            */
+            console.log(`[SAFETY] Skip automatic cleanup of ${ids.length} packages.`);
         }
     } catch (err) {
         console.error('[MeliPolling] Error during automatic cleanup:', err);
@@ -846,10 +849,13 @@ async function cleanupDuplicates() {
             const [keepId, ...deleteIds] = row.ids;
             console.log(`[MeliPolling] Cleaning up ${deleteIds.length} duplicates for Flex Code ${row.meliFlexCode}. Keeping ID ${keepId}`);
             
+            /* 
             // Delete tracking events first
             await db.query('DELETE FROM tracking_events WHERE "packageId" = ANY($1)', [deleteIds]);
             // Delete packages
             await db.query('DELETE FROM packages WHERE id = ANY($1)', [deleteIds]);
+            */
+            console.log(`[SAFETY] Skip duplicate cleanup of ${deleteIds.length} packages.`);
         }
         console.log(`[MeliPolling] Cleanup complete. Removed duplicates for ${duplicates.length} Flex codes.`);
     } catch (err) {

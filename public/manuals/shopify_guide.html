@@ -198,96 +198,95 @@
         
         <header>
             <div style="display: flex; align-items: center; gap: 20px;">
-                <img src="/logo.png" alt="Full Envios Logo" style="height: 60px; width: auto;">
+                <img src="/logo.png" alt="Full Envios Logo" style="height: 60px; width: auto;" onerror="this.style.display='none'">
                 <div>
                     <div class="logo-text">FULL ENVIOS</div>
                     <h1>Manual de Integración Shopify 2026</h1>
                 </div>
             </div>
             <div style="text-align: right; color: var(--text-light); font-size: 14px;">
-                Versión 2.1<br>
-                Abril 2026
+                Versión 2.2<br>
+                Mayo 2026
             </div>
         </header>
 
-        <p>Esta guía detalla los pasos necesarios para conectar de manera exitosa su tienda Shopify con la plataforma de Full Envios, permitiendo la automatización de su flujo logístico.</p>
+        <p>Esta guía detalla los pasos necesarios para conectar de manera exitosa su tienda Shopify con la plataforma de Full Envios, permitiendo la automatización de su flujo logístico a través de nuestro sistema de instalación de "1 clic".</p>
 
         <div class="alert alert-important">
             <strong>REQUISITO CRÍTICO:</strong> Antes de iniciar, asegúrese de estar <strong>logueado en su panel de administración de Shopify</strong> en el mismo navegador donde tiene abierta la plataforma de Full Envios. Esto es indispensable para que la conexión automática funcione correctamente.
         </div>
 
-        <h2>1. Conexión Automática (Recomendado)</h2>
+        <h2>1. Conexión de 1-Clic (Recomendado)</h2>
         <div class="step">
             <div class="step-number">1</div>
-            <div>
-                <strong>Ingrese la URL:</strong> En la pestaña "Conexión", escriba el subdominio de su tienda (ej: <code>mi-tienda.myshopify.com</code>).
+            <div class="step-content">
+                <strong>Ingresar a Integraciones:</strong> En su portal de cliente de Full Envios, diríjase a la sección <strong>Configuración > Cuentas Vinculadas</strong>.
             </div>
         </div>
         <div class="step">
             <div class="step-number">2</div>
-            <div>
-                <strong>Conectar:</strong> Haga clic en el botón verde <strong>"Conectar automáticamente"</strong>. Si ya está logueado en Shopify, se abrirá una ventana de autorización.
+            <div class="step-content">
+                <strong>Seleccionar Shopify:</strong> Haga clic en el recuadro que dice <strong>"Vincular Nueva Cuenta"</strong> y presione el ícono de Shopify.
             </div>
         </div>
         <div class="step">
             <div class="step-number">3</div>
-            <div>
-                <strong>Instalar App:</strong> Revise los permisos y haga clic en <strong>"Instalar App"</strong>. El sistema lo regresará automáticamente a Full Envios con la conexión lista.
+            <div class="step-content">
+                <strong>Ingresar URL y Conectar:</strong> Escriba el subdominio de su tienda (ej: <code>mi-tienda.myshopify.com</code>) en la ventana que aparece. Luego, haga clic en el botón verde inferior que dice <strong>"Usar conexión un-clic"</strong>.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Autorizar:</strong> Será redirigido a Shopify. Revise los permisos y haga clic en <strong>"Instalar App"</strong>. El sistema lo regresará automáticamente a Full Envios con la conexión lista y activa.
             </div>
         </div>
 
-        <h2>2. Conexión Manual (App Privada)</h2>
-        <p>Si prefiere no usar el flujo automático, puede configurar una App Personalizada en Shopify y obtener un "Access Token".</p>
+        <h2>2. Conexión Manual (App Privada / Solo Respaldo)</h2>
+        <p>Si la conexión automática está bloqueada, puede usar el método de Token Manual.</p>
         <div class="step">
             <div class="step-number">1</div>
-            <div>
-                <strong>Pestaña Manual:</strong> Diríjase a la pestaña "Modo Manual" en la configuración de Shopify.
+            <div class="step-content">
+                <strong>Crear App en Shopify:</strong> Vaya a Configuración > Aplicaciones en su tienda Shopify y cree una "App Personalizada" con permisos de lectura (`read_orders`, etc.).
             </div>
         </div>
         <div class="step">
             <div class="step-number">2</div>
-            <div>
-                <strong>Ingrese el Token:</strong> Pegue su token que comienza con <span class="token-box">shpat_...</span>.
+            <div class="step-content">
+                <strong>Ingresar el Token:</strong> En el mismo panel de Full Envios donde ingresó la URL, escriba el <strong>Admin API Access Token</strong> (que comienza con <span class="token-box">shpat_...</span>) en la casilla correspondiente.
             </div>
         </div>
         <div class="step">
             <div class="step-number">3</div>
-            <div>
-                <strong>Probar:</strong> Use el botón "Probar Conexión Manual" para validar que las credenciales son funcionales.
+            <div class="step-content">
+                <strong>Vincular:</strong> Haga clic en <strong>"Vincular con Token (Manual)"</strong>.
             </div>
         </div>
 
-        <h2>3. Ajustes de Sincronización</h2>
-        <p>Una vez conectado, active la automatización en la pestaña "Sincronización":</p>
+        <h2>3. Ajustes de Sincronización Automática</h2>
+        <p>Una vez conectado, su tienda aparecerá como una tarjeta en el menú de "Cuentas Vinculadas".</p>
         <ul>
-            <li><strong>Interruptor:</strong> Debe estar activado (color verde) para importar órdenes sin intervención manual.</li>
-            <li><strong>Tiempo de revisión:</strong> Recomendamos <strong>5 o 15 minutos</strong> para un flujo constante. Si su tienda tiene poco volumen, puede usar 30 o 60 minutos.</li>
+            <li><strong>Interruptor:</strong> Active el interruptor azul para habilitar la importación automática de pedidos.</li>
+            <li><strong>Tiempo de revisión:</strong> En la opción "Cada", seleccione cada cuántos minutos (ej: 5 o 15 min) Full Envios debe buscar nuevos pedidos en su tienda.</li>
         </ul>
-
-        <div class="alert">
-            <strong>NOTA SOBRE REGIONES:</strong> La importación automática actualmente procesa exclusivamente pedidos con destino a la <strong>Región Metropolitana</strong>. Pedidos a regiones extremas deben gestionarse manualmente.
-        </div>
 
         <h2>4. Gestión de Múltiples Cuentas</h2>
         <p>Full Envios permite conectar y administrar múltiples tiendas de Shopify bajo un mismo usuario. Esto es ideal si manejas diferentes marcas o sucursales.</p>
         <div class="step">
             <div class="step-number">+</div>
-            <div>
-                <strong>Añadir nueva:</strong> Haz clic en el botón <strong>"Vincular Nueva Cuenta"</strong> y selecciona el icono de Shopify. Se abrirá un modal para ingresar el nuevo dominio.
+            <div class="step-content">
+                <strong>Añadir nueva:</strong> Repite el proceso de <strong>"Vincular Nueva Cuenta"</strong>. Se añadirá una nueva tarjeta en tu panel.
             </div>
         </div>
         <div class="step">
             <div class="step-number">✎</div>
-            <div>
-                <strong>Personalización:</strong> Puedes editar el nombre de cada cuenta (ej: "Tienda Verano" o "Bodega Centro") pulsando el icono del lápiz junto al nombre.
+            <div class="step-content">
+                <strong>Personalización:</strong> Puedes editar el nombre de cada cuenta (ej: "Tienda Verano" o "Bodega Centro") pulsando el icono del lápiz junto al nombre de la tienda en su respectiva tarjeta.
             </div>
         </div>
         <div class="alert alert-important">
             <strong>TIP PARA MÚLTIPLES CUENTAS:</strong> Si vas a conectar una tienda diferente a la que ya tienes abierta, asegúrate de <strong>cerrar sesión en Shopify</strong> primero o usa una ventana de <strong>Incógnito</strong>. De lo contrario, el navegador intentará conectar siempre la misma cuenta que ya tienes abierta.
         </div>
-
-        <h2>5. Guardado Final</h2>
-        <p>Independiente de los cambios realizados en las pestañas, es <strong>obligatorio</strong> hacer clic en el botón inferior <strong>"Guardar Configuración"</strong> para aplicar los cambios en el servidor.</p>
 
         <footer>
             © 2026 Full Envios - Soporte Técnico: soporte@fullenvios.cl<br>

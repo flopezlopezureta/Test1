@@ -111,6 +111,15 @@ router.get('/', authMiddleware, async (req, res) => {
         if (driverFilter) {
             whereClauses.push(`p."driverId" = $${paramIndex++}`);
             queryParams.push(driverFilter);
+            
+            // [CRITICO v2.6.4] Si es conductor, relajamos el filtro de fecha para que vea paquetes activos
+            // de días anteriores que aún no han sido finalizados.
+            if (req.user.role === 'DRIVER' && !isHistoricalSearch) {
+                 whereClauses.push(`(
+                    (p.status NOT IN ('ENTREGADO', 'DEVUELTO', 'CANCELADO')) OR
+                    (p."updatedAt" >= current_date - interval '1 day')
+                 )`);
+            }
         }
         
         if (clientFilter) { // Admin filtering by client from the filter bar
