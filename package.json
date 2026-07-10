@@ -1,7 +1,7 @@
 {
   "name": "full-envios-app",
-  "version": "2.6.55",
-  "versionComment": "Versión 2.6.55: Solución a bug crítico de re-egreso de paquetes. Se permite re-despachar paquetes en tránsito/asignados de días anteriores al mismo conductor sin gatillar el bloqueo de 'Paquete Duplicado', actualizando correctamente la fecha de egreso (assignedAt) al día de hoy.",
+  "version": "2.6.56",
+  "versionComment": "Versión 2.6.56: Implementada búsqueda extendida con prefijo de 'Pasaje' en el geocodificador automático (geocodeAddress) cuando la dirección inicial no arroja resultados, resolviendo problemas de localización de direcciones en comunas de Chile.",
   "private": true,
   "description": "Fixed ML auto-import type mismatch (sellerId), corrected Import Orders navigation ID, fixed mobile sidebar rendering above blur overlay, Added JSON QR Scan support.",
   "scripts": {
