@@ -325,6 +325,7 @@ export const api = {
   confirmReturn: (pkgId: string, data: DeliveryConfirmationData) => post<Package>(`/packages/${encodeURIComponent(pkgId)}/return`, data),
   markPackagesAsBilled: (packageIds: string[]) => post<void>('/packages/mark-billed', { packageIds }),
   scanPackageForDispatch: (packageId: string, driverId: string, flexCode?: string, flexLabelPhotoBase64?: string, forceReassign?: boolean) => post<{message: string, package: Package}>(`/packages/${encodeURIComponent(packageId)}/dispatch`, { driverId, flexCode, flexLabelPhotoBase64, forceReassign }),
+  queryPackageSector: (searchId: string) => get<{ package: Package; sectorDetails: { comuna: string; sector: string; sectorLabel: string; geometry: any } | null }>(`/packages/query/${encodeURIComponent(searchId)}`),
   markPackageAsFlexed: (packageId: string, isFlexed: boolean, flexLabelPhotoBase64?: string) => post<Package>(`/packages/${encodeURIComponent(packageId)}/flex`, { isFlexed, flexLabelPhotoBase64 }),
   syncPackageWithMeli: (packageId: string) => post<Package & { noChange?: boolean; mlStatus?: string; mlSubstatus?: string }>(`/packages/${encodeURIComponent(packageId)}/sync-meli`, {}),
   syncAllMeliPackages: () => post<{ message: string; result: any }>('/packages/sync-meli-all', {}),
@@ -444,4 +445,11 @@ export const api = {
   },
   bulkMarkAllProcessed: () => post<{message: string, updatedCount: number}>('/packages/sys/bulk-mark-processed', {}),
   forceCloseOldPackages: (days: number) => post<{message: string, updatedCount: number}>('/packages/sys/force-close-old', { days }),
+
+  // GIS Sectors
+  getGisSectors: (comuna?: string) => get<any[]>(`/gis/sectors${comuna ? `?comuna=${encodeURIComponent(comuna)}` : ''}`),
+  getGisSectorComunas: () => get<{ comuna: string; count: number }[]>('/gis/sectors/comunas'),
+  createGisSector: (data: { comuna: string; sector: string; geometry: any }) => post<any>('/gis/sectors', data),
+  updateGisSector: (id: string, data: { sector?: string; geometry?: any }) => put<any>(`/gis/sectors/${id}`, data),
+  deleteGisSector: (id: string) => del<void>(`/gis/sectors/${id}`),
 };

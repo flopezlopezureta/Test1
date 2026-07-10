@@ -11,6 +11,7 @@ const { logAction } = require('../services/logger');
 const meliPollingService = require('../services/meliPollingService');
 const jumpsellerPollingService = require('../services/jumpsellerPollingService');
 const { geocodeAddress, triggerBackgroundGeocoding } = require('../services/geocodingService');
+const gisService = require('../services/gisService');
 
 // [EMERGENCIA] Ruta para normalizar todas las comunas y ciudades del historial
 router.get('/sys/normalize-all', authMiddleware, async (req, res) => {
@@ -487,6 +488,82 @@ router.get('/:id', authMiddleware, async (req, res) => {
     } catch (err) {
         console.error('Error in GET /api/packages/:id:', err);
         res.status(500).json({ message: 'Error al obtener detalles del paquete.' });
+    }
+});
+
+// GET /api/packages/query/:searchId - Consulta de sector sin asignación
+router.get('/query/:searchId', authMiddleware, async (req, res) => {
+    try {
+        const { searchId } = req.params;
+        
+        // Búsqueda extendida por ID, ML, Shopify, Tracking ID, etc.
+        let { rows } = await db.query(
+            `SELECT p.*, u.name as "clientName" 
+             FROM packages p 
+             LEFT JOIN users u ON p."creatorId" = u.id 
+             WHERE p.id = $1 
+                OR p."meliOrderId" = $1 
+                OR p."shopifyOrderId" = $1 
+                OR p."wooOrderId" = $1 
+                OR p."jumpsellerOrderId" = $1 
+                OR p."trackingId" = $1 
+                OR p."meliFlexCode" = $1`, 
+            [searchId]
+        );
+        
+        // [NUEVO] IMPORTACIÓN JIT PARA CONSULTAS: si no existe localmente, buscar en Mercado Libre
+        if (rows.length === 0) {
+            console.log(`[Query] Package ${searchId} NOT found in DB. Starting JIT Discovery...`);
+            const { rows: meliUsers } = await db.query("SELECT id, name FROM users WHERE integrations->'meli' IS NOT NULL");
+            if (meliUsers.length > 0) {
+                const results = await Promise.all(meliUsers.map(async (u) => {
+                    try {
+                        const importedId = await meliPollingService.importSpecificMeliPackage(u.id, searchId, true);
+                        return importedId ? { importedId, user: u } : null;
+                    } catch (err) {
+                        return null;
+                    }
+                }));
+
+                const success = results.find(r => r !== null);
+                if (success) {
+                    console.log(`[Query] SUCCESS! Shipment ${searchId} found and linked as ${success.importedId}.`);
+                    const reCheck = await db.query(
+                        `SELECT p.*, u.name as "clientName" 
+                         FROM packages p 
+                         LEFT JOIN users u ON p."creatorId" = u.id 
+                         WHERE p.id = $1`,
+                        [success.importedId]
+                    );
+                    rows = reCheck.rows;
+                }
+            }
+        }
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'Paquete no encontrado para consulta.' });
+        }
+        
+        const pkg = rows[0];
+        pkg.history = await getHistory(pkg.id);
+        
+        // Remove heavy photo fields
+        delete pkg.flexLabelPhotoBase64;
+        delete pkg.deliveryPhotosBase64;
+        
+        // Calcular información GIS y geometría del sector
+        let sectorDetails = null;
+        if (pkg.destLatitude && pkg.destLongitude) {
+            sectorDetails = gisService.getSectorDetailsForCoordinates(pkg.destLatitude, pkg.destLongitude);
+        }
+        
+        res.json({
+            package: pkg,
+            sectorDetails
+        });
+    } catch (err) {
+        console.error('Error in GET /api/packages/query/:searchId:', err);
+        res.status(500).json({ message: 'Error al consultar sector del paquete.' });
     }
 });
 
@@ -1246,6 +1323,10 @@ router.post('/:id/dispatch', authMiddleware, dispatchAllowed, async (req, res) =
         if (updatedPkg) {
             delete updatedPkg.flexLabelPhotoBase64;
             delete updatedPkg.deliveryPhotosBase64;
+            
+            if (updatedPkg.destLatitude && updatedPkg.destLongitude) {
+                updatedPkg.sectorName = gisService.getSectorForCoordinates(updatedPkg.destLatitude, updatedPkg.destLongitude);
+            }
         }
 
         updatedPkg.history = await getHistory(realId);
