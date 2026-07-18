@@ -1630,9 +1630,8 @@ async function syncDeliveryToFalabella(packageId, trackingId, attempts = 1) {
 
         // 4. Intentar marcar la orden como 'shipped' (enviada) primero, por si acaso (algunos Seller Center restringen saltarse este paso)
         try {
-            await makeFalabellaApiCall('UpdateOrderItems', {
-                OrderItemIds: JSON.stringify(orderItemIds),
-                Status: 'shipped'
+            await makeFalabellaApiCall('SetStatusToShipped', {
+                OrderItemIds: JSON.stringify(orderItemIds)
             });
             console.log(`[FalabellaSync] Items marked as shipped in Falabella.`);
         } catch (shippedErr) {
@@ -1640,9 +1639,8 @@ async function syncDeliveryToFalabella(packageId, trackingId, attempts = 1) {
         }
 
         // 5. Marcar la orden como 'delivered' (entregada)
-        await makeFalabellaApiCall('UpdateOrderItems', {
-            OrderItemIds: JSON.stringify(orderItemIds),
-            Status: 'delivered'
+        await makeFalabellaApiCall('SetStatusToDelivered', {
+            OrderItemIds: JSON.stringify(orderItemIds)
         });
         
         await db.query(
