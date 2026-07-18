@@ -1817,7 +1817,7 @@ router.post('/:id/deliver', authMiddleware, async (req, res) => {
         // --- END MELI VALIDATION ---
 
         const { rows } = await db.query(
-            'UPDATE packages SET status = $1, "deliveryReceiverName" = $2, "deliveryReceiverId" = $3, "deliveryPhotosBase64" = $4, "updatedAt" = $5 WHERE id = $6 RETURNING *',
+            'UPDATE packages SET status = $1, "deliveryReceiverName" = $2, "deliveryReceiverId" = $3, "deliveryPhotosBase64" = $4, "meliDeliveredNeedsPhotos" = false, "updatedAt" = $5 WHERE id = $6 RETURNING *',
             ['ENTREGADO', receiverName, receiverId, JSON.stringify(photosBase64), new Date(), id]
         );
         if (rows.length === 0) return res.status(404).json({ message: 'Paquete no encontrado.' });
