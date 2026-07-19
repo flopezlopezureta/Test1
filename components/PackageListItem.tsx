@@ -244,6 +244,11 @@ const PackageListItem: React.FC<PackageListItemProps> = ({ pkg, driverName, crea
                                     {pkg.recipientCommune || 'Sin Comuna'}
                                 </span>
                             )}
+                            {pkg.distance !== undefined && (
+                                <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                    📍 {pkg.distance >= 1 ? `${pkg.distance.toFixed(1)} km` : `${Math.round(pkg.distance * 1000)} m`}
+                                </span>
+                            )}
                             {/* [NUEVO] Mostrar ID de Referencia / Mercado Libre para identificación rápida */}
                             {(pkg.meliOrderId || pkg.meliFlexCode || pkg.shopifyOrderId || pkg.shopifyOrderNumber || pkg.falabellaTrackingId || pkg.falabellaOrderId) && (
                                 <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
